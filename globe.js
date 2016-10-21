@@ -13,15 +13,15 @@
 
 var DAT = DAT || {};
 
-DAT.Globe = function(container, opts) {
-  opts = opts || {};
+DAT.Globe = function(container, options) {
+  options = options || {};
   
-  var colorFn = opts.colorFn || function(x) {
+  var colorFn = options.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
     return c;
   };
-  var imgDir = opts.imgDir || '/globe/';
+  var imgDir = options.imgDir || '/globe/';
 
   var Shaders = {
     'earth' : {
@@ -165,33 +165,32 @@ DAT.Globe = function(container, opts) {
     }, false);
   }
 
-  function addData(data, opts) {
+  function addData(data, options) {
     console.log(data)
-    console.log(opts)
+    console.log(options)
     var lat, lng, size, color, i, step, colorFnWrapper;
 
-    opts.animated = opts.animated || false;
-    this.is_animated = opts.animated;
-    opts.format = opts.format || 'magnitude'; // other option is 'legend'
-    if (opts.format === 'magnitude') {
+    options.animated = options.animated || false;
+    this.is_animated = options.animated;
+    options.format = options.format || 'magnitude'; // other option is 'legend'
+    if (options.format === 'magnitude') {
       step = 3;
-      colorFnWrapper = function(data, i) { return colorFn(data[i+2]); }
-    } else if (opts.format === 'legend') {
+      colorFnWrapper = function(data, i) { return colorFn(data[i]); } //changed this (was originally i+2)
+    } else if (options.format === 'legend') {
       step = 4;
       colorFnWrapper = function(data, i) { return colorFn(data[i+3]); }
     } else {
-      throw('error: format not supported: '+opts.format);
+      throw('error: format not supported: '+options.format);
     }
 
-    if (opts.animated) {
+    if (options.animated) {
       if (this._baseGeometry === undefined) {
         this._baseGeometry = new THREE.Geometry();
         for (i = 0; i < data.length; i += step) {
           lat = data[i];
           lng = data[i + 1];
-//        size = data[i + 2];
+          size = data[i + 2];
           color = colorFnWrapper(data,i);
-          size = 0;
           addPoint(lat, lng, size, color, this._baseGeometry);
         }
       }
@@ -200,7 +199,7 @@ DAT.Globe = function(container, opts) {
       } else {
         this._morphTargetId += 1;
       }
-      opts.name = opts.name || 'morphTarget'+this._morphTargetId;
+      options.name = options.name || 'morphTarget'+this._morphTargetId;
     }
     var subgeo = new THREE.Geometry();
     for (i = 0; i < data.length; i += step) {
@@ -211,8 +210,8 @@ DAT.Globe = function(container, opts) {
       size = size*200;
       addPoint(lat, lng, size, color, subgeo);
     }
-    if (opts.animated) {
-      this._baseGeometry.morphTargets.push({'name': opts.name, vertices: subgeo.vertices});
+    if (options.animated) {
+      this._baseGeometry.morphTargets.push({'name': options.name, vertices: subgeo.vertices});
     } else {
       this._baseGeometry = subgeo;
     }

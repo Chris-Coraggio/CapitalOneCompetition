@@ -1,19 +1,29 @@
 const key = "AIzaSyCYogLb8gewvYr-rCi3vI6owUXJzhQMVWg";
+var container, globe;
+var countries = ['Brazil', 'Colombia', 'United States', 'Spain'];
+var allData = [];
 
 $(document).ready(function(){
-	getLatLngFromName('Brazil');
-	getPopulation('Brazil', '1998', 'total', ['19']);
 	createMap();
+	for(var i in countries){
+		console.log(countries[i])
+		addLatLngFromName(countries[i]);
+	}
+	//getPopulation('Brazil', '1998', 'total', ['19']);
+	populateMap();
 })
 
-function getLatLngFromName(name, callbackfn){
+function addLatLngFromName(name, callback){
 	$.getJSON({
 		url: "https://maps.googleapis.com/maps/api/geocode/json?address="
 		+ name.replace(" ", "%20") + "&key=" + key,
+		async: false
 		},
 		function(data){
-			if(callbackfn) callbackfn(data.results[0].geometry.location);
-		})
+			data = data.results[0].geometry.location;
+			allData.push(data.lat, data.lng,
+				   getPopulation(name, '1980', 'males', ['18', '19', '20']));
+		});
 }
 
 function getPopulation(country, year, sex, ages_array){
@@ -28,30 +38,27 @@ function getPopulation(country, year, sex, ages_array){
 				pop_count += data[0][sex];
 			})
 	})
-	console.log(pop_count)
 	return pop_count;
 }
 
 function createMap(){
 	// Where to put the globe?
-	var container = document.getElementById( 'container' );
+	container = document.getElementById( 'container' );
 
 	// Make the globe
-	var globe = new DAT.Globe(container);
+	globe = new DAT.Globe(container);
+}
 
-	//getPopulation('Brazil', '1998', 'total', ['19'])
-	getLatLngFromName(
-		'Brazil', function(data){
-			globe.addData([data.lat, data.lng,
-				   100000], {
-			animated: true,
+function populateMap(){
+	console.log(allData);
+	globe.addData(allData, {
 			format: 'magnitude',
-			name: "Shouldn't matter"
-			})
-		});
-    // Create the geometry
-    globe.createPoints();
+			name: Math.random(),
+			animated: false
+			});
 
-    // Begin animation
-    globe.animate();
+		setTimeout(function(){
+			globe.createPoints();
+			globe.animate();
+		}, 2000);
 }
