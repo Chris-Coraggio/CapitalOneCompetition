@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
-		<script src="gather_data.js"></script>
-		<script src="globe.js"></script>
+    <script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.js"></script>
 	</head>
 	<body>
-		<div id="container"></div>
+    <div class="container-fluid">
+          <label for="sexDropdown">Gender:</label>
+          <select title="Choose a gender" id="sexDropdown">
+            <option value="males">Males only</option>
+            <option value="females">Females only</option>
+            <option value="total">Both</option>
+          </select>
+          <label for="yearInput">Year:</label>
+          <input id="yearInput" type="text" min="1950" max="2100" value="2000">
+          <button id="submitButton">Submit</button>
+          <div id="container"></div>
+    </div>
 	</body>
+  <script src="gather_data.js"></script>
+  <script src="globe.js"></script>
 </html>
